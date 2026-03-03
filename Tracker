@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <meta name="theme-color" content="#0a0a0a"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="Deficit"/>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="apple-touch-icon" href="icons/icon-192.png"/>
+  <title>Deficit Tracker</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+    :root{
+      --bg:#0a0a0a;--bg1:#0f0f0f;--bg2:#141414;--bg3:#1a1a1a;
+      --border:#1e1e1e;--text:#e8e0d0;--muted:#888;--dim:#444;
+      --green:#4ade80;--yellow:#facc15;--red:#f87171;--blue:#60a5fa;--gold:#fbbf24;
+      --row-border:#111;--nm-color:#b0a898;--btn-e-bg:#1e1e1e;--btn-d-bg:#1a0808;
+      --input-bg:#080808;--streak-bg:#1a1200;--streak-border:#3a2800;
+      --cal-green:#0d2a1a;--cal-yellow:#2a2200;--cal-red:#2a0d0d;
+      --dot-g:#1a4a2a;--dot-y:#3a3000;--dot-r:#3a1010;
+      --reward-unlockable-border:#2a2a1a;--redeem-bg:#2a2200;--redeem-border:#4a3a00;
+      --redeemed-bg:#141414;--modal-overlay:rgba(0,0,0,0.85);--modal-btn-text:#000;
+    }
+    body.light, html.light{
+      --bg:#f5f2ee;--bg1:#ffffff;--bg2:#ede9e3;--bg3:#ddd8d0;
+      --border:#d0cbc3;--text:#1a1714;--muted:#666;--dim:#999;
+      --green:#16a34a;--yellow:#ca8a04;--red:#dc2626;--gold:#b45309;
+      --row-border:#ede9e3;--nm-color:#555;--btn-e-bg:#e8e3dc;--btn-d-bg:#fde8e8;
+      --input-bg:#f5f2ee;--streak-bg:#fef3c7;--streak-border:#fbbf24;
+      --cal-green:#dcfce7;--cal-yellow:#fef9c3;--cal-red:#fee2e2;
+      --dot-g:#86efac;--dot-y:#fde047;--dot-r:#fca5a5;
+      --reward-unlockable-border:#fbbf24;--redeem-bg:#fef3c7;--redeem-border:#fbbf24;
+      --redeemed-bg:#ede9e3;--modal-overlay:rgba(0,0,0,0.5);--modal-btn-text:#000;
+    }
+    html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Courier New',monospace;transition:background 0.2s,color 0.2s;}
+    html{background:var(--bg);}
+    body{display:flex;flex-direction:column;max-width:640px;margin:0 auto;}
+
+```
+/* TOP BAR */
+.topbar{padding:max(env(safe-area-inset-top),16px) 16px 12px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.topbar-inner{display:flex;align-items:center;justify-content:space-between;}
+.topbar h1{font-size:18px;font-weight:700;letter-spacing:-0.5px;}
+.topbar .pts-badge{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:11px;cursor:pointer;display:flex;align-items:center;gap:5px;}
+.pts-badge .pts-num{color:var(--gold);font-weight:700;font-size:13px;}
+
+/* SCROLL CONTENT */
+.content{flex:1;overflow-y:auto;padding:16px 16px 80px;}
+
+/* BOTTOM NAV */
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:640px;background:var(--bg1);border-top:1px solid var(--border);display:flex;padding-bottom:env(safe-area-inset-bottom);z-index:100;}
+.nav-btn{flex:1;padding:12px 4px 8px;background:none;border:none;color:var(--dim);font-family:'Courier New',monospace;font-size:9px;letter-spacing:1.5px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;transition:color 0.2s;}
+.nav-btn.active{color:var(--text);}
+.nav-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;}
+
+/* CARDS */
+.cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px;}
+.card{background:var(--bg1);border:1px solid var(--border);border-radius:10px;padding:12px 10px;}
+.card .clabel{font-size:8px;letter-spacing:2px;color:var(--dim);margin-bottom:4px;}
+.card .cval{font-size:19px;font-weight:700;}
+.card .cunit{font-size:10px;color:var(--dim);margin-left:2px;}
+.cards-2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
+
+/* SECTION HEADERS */
+.sec-head{font-size:9px;letter-spacing:3px;color:var(--dim);margin-bottom:10px;margin-top:20px;}
+
+/* TABLE */
+.tbl{background:var(--bg1);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:12px;}
+.tbl-head{display:grid;grid-template-columns:52px 1fr 1fr 76px 68px 44px 40px;padding:9px 12px;border-bottom:1px solid var(--border);}
+.tbl-head span{font-size:7px;letter-spacing:2px;color:var(--dim);}
+.tbl-row{display:grid;grid-template-columns:52px 1fr 1fr 76px 68px 44px 40px;padding:12px 12px;border-bottom:1px solid var(--row-border);align-items:center;}
+.tbl-row:last-child{border-bottom:none;}
+.tbl-row:active{background:var(--bg2);}
+.tbl-row .dt{font-size:11px;font-weight:600;color:var(--muted);}
+.tbl-row .nm{font-size:12px;color:var(--nm-color);}
+.tbl-row .df{font-size:12px;font-weight:700;}
+.tbl-row .pr{font-size:12px;font-weight:700;}
+.tbl-row .px{font-size:11px;font-weight:700;color:var(--gold);}
+.row-acts{display:flex;gap:4px;}
+.btn-e,.btn-d{width:24px;height:24px;border:none;border-radius:4px;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;}
+.btn-e{background:var(--btn-e-bg);color:var(--muted);}
+.btn-d{background:var(--btn-d-bg);color:var(--red);}
+
+.empty-state{padding:40px;text-align:center;color:var(--dim);font-size:13px;}
+
+/* ADD BTN */
+.add-btn{width:100%;padding:14px;background:transparent;border:1px dashed var(--bg3);border-radius:10px;color:var(--dim);font-size:11px;letter-spacing:2px;cursor:pointer;font-family:'Courier New',monospace;transition:all 0.2s;}
+.add-btn:active{border-color:var(--muted);color:var(--muted);}
+
+/* FORM */
+.form-wrap{background:var(--bg1);border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:12px;}
+.form-title{font-size:9px;letter-spacing:3px;color:var(--dim);margin-bottom:12px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+.field label{display:block;font-size:8px;letter-spacing:2px;color:var(--dim);margin-bottom:5px;}
+.field input{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:7px;padding:10px 11px;color:var(--text);font-size:15px;font-family:'Courier New',monospace;outline:none;}
+.field input:focus{border-color:var(--muted);}
+.form-btns{display:flex;gap:8px;}
+.btn-save{flex:1;padding:12px;background:var(--text);border:none;border-radius:8px;color:var(--bg);font-size:11px;font-weight:700;cursor:pointer;font-family:'Courier New',monospace;letter-spacing:2px;}
+.btn-cancel{padding:12px 14px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--dim);font-size:11px;cursor:pointer;font-family:'Courier New',monospace;}
+
+/* MONTH NAV */
+.month-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.month-nav .mn-title{font-size:16px;font-weight:700;}
+.mn-btn{background:var(--bg2);border:1px solid var(--border);border-radius:7px;color:var(--text);font-size:16px;width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+
+/* MONTH SUMMARY */
+.month-summary{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
+.ms-card{background:var(--bg1);border:1px solid var(--border);border-radius:10px;padding:12px;}
+.ms-card .msl{font-size:8px;letter-spacing:2px;color:var(--dim);margin-bottom:4px;}
+.ms-card .msv{font-size:22px;font-weight:700;}
+.ms-card .msu{font-size:10px;color:var(--dim);margin-left:2px;}
+
+/* CALENDAR GRID */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:16px;}
+.cal-dow{font-size:8px;letter-spacing:1px;color:var(--dim);text-align:center;padding-bottom:4px;}
+.cal-day{aspect-ratio:1;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;cursor:pointer;border:1px solid transparent;transition:all 0.15s;position:relative;}
+.cal-day.empty{background:transparent;cursor:default;}
+.cal-day.has-data{border-color:var(--bg3);}
+.cal-day.today{border-color:var(--muted)!important;}
+.cal-day .cd-num{font-size:11px;font-weight:600;}
+.cal-day .cd-pts{font-size:8px;color:var(--gold);}
+.cal-day.c-green{background:var(--cal-green);}
+.cal-day.c-yellow{background:var(--cal-yellow);}
+.cal-day.c-red{background:var(--cal-red);}
+.cal-day.c-empty{background:var(--bg1);}
+
+/* YEAR VIEW */
+.year-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.year-nav .yn-title{font-size:16px;font-weight:700;}
+
+.year-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;}
+.yr-month{background:var(--bg1);border:1px solid var(--border);border-radius:8px;padding:10px;cursor:pointer;}
+.yr-month:active{background:var(--bg2);}
+.yr-month .ym-name{font-size:9px;letter-spacing:2px;color:var(--dim);margin-bottom:6px;}
+.yr-month .ym-mini{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+.ym-dot{width:100%;aspect-ratio:1;border-radius:2px;}
+.ym-dot.dg{background:var(--dot-g);}
+.ym-dot.dy{background:var(--dot-y);}
+.ym-dot.dr{background:var(--dot-r);}
+.ym-dot.de{background:var(--bg3);}
+.yr-month .ym-pts{font-size:11px;color:var(--gold);margin-top:6px;font-weight:700;}
+
+.year-summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px;}
+
+/* REWARDS */
+.rewards-section{margin-top:4px;}
+.pts-total{background:var(--bg1);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;}
+.pts-total .pt-left .ptl{font-size:9px;letter-spacing:2px;color:var(--dim);margin-bottom:4px;}
+.pts-total .pt-left .ptv{font-size:32px;font-weight:700;color:var(--gold);}
+.pts-total .pt-right{font-size:11px;color:var(--dim);text-align:right;line-height:1.6;}
+
+.reward-list{display:flex;flex-direction:column;gap:8px;}
+.reward-item{background:var(--bg1);border:1px solid var(--border);border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px;}
+.reward-item.unlockable{border-color:var(--reward-unlockable-border);}
+.reward-item.locked{opacity:0.5;}
+.ri-icon{font-size:24px;width:40px;text-align:center;}
+.ri-info{flex:1;}
+.ri-name{font-size:13px;font-weight:600;margin-bottom:2px;}
+.ri-desc{font-size:11px;color:var(--dim);}
+.ri-cost{font-size:12px;color:var(--gold);font-weight:700;white-space:nowrap;}
+.ri-prog{height:3px;background:var(--bg3);border-radius:2px;margin-top:6px;overflow:hidden;}
+.ri-prog-fill{height:100%;border-radius:2px;background:var(--gold);transition:width 0.3s;}
+.btn-redeem{background:var(--redeem-bg);border:1px solid var(--redeem-border);color:var(--gold);border-radius:7px;padding:7px 12px;font-size:10px;font-weight:700;cursor:pointer;font-family:'Courier New',monospace;letter-spacing:1px;white-space:nowrap;}
+.btn-redeem:active{background:var(--bg3);}
+
+/* REDEEMED HISTORY */
+.redeemed-list{display:flex;flex-direction:column;gap:6px;margin-top:8px;}
+.redeemed-item{background:var(--redeemed-bg);border-radius:8px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;}
+.ri-r-name{font-size:12px;}
+.ri-r-date{font-size:10px;color:var(--dim);}
+
+/* LEGEND */
+.legend{display:flex;gap:12px;font-size:10px;color:var(--dim);margin-bottom:14px;flex-wrap:wrap;}
+
+/* COLORS */
+.green{color:var(--green);}
+.yellow{color:var(--yellow);}
+.red{color:var(--red);}
+.gold{color:var(--gold);}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:var(--modal-overlay);z-index:200;display:flex;align-items:flex-end;justify-content:center;}
+.modal{background:var(--bg1);border:1px solid var(--border);border-radius:16px 16px 0 0;padding:24px 20px max(env(safe-area-inset-bottom),20px);width:100%;max-width:640px;}
+.modal h3{font-size:16px;font-weight:700;margin-bottom:4px;}
+.modal .modal-sub{font-size:12px;color:var(--dim);margin-bottom:16px;}
+.modal-btns{display:flex;gap:10px;margin-top:16px;}
+.modal-confirm{flex:1;padding:13px;background:var(--gold);border:none;border-radius:8px;color:var(--modal-btn-text);font-size:12px;font-weight:700;cursor:pointer;font-family:'Courier New',monospace;letter-spacing:1px;}
+.modal-cancel{padding:13px 16px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--dim);font-size:12px;cursor:pointer;font-family:'Courier New',monospace;}
+
+.streak-badge{display:inline-flex;align-items:center;gap:4px;background:var(--streak-bg);border:1px solid var(--streak-border);border-radius:20px;padding:4px 10px;font-size:11px;color:var(--gold);}
+/* THEME TOGGLE */
+.theme-toggle{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:5px 10px;font-size:11px;cursor:pointer;color:var(--muted);font-family:'Courier New',monospace;transition:all 0.2s;}
+```
+
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div>
+      <div style="font-size:9px;letter-spacing:3px;color:var(--dim);margin-bottom:2px;">DAILY LOG</div>
+      <h1>Deficit Tracker</h1>
+    </div>
+    <div class="pts-badge" onclick="showTab('rewards')">
+      <span>⭐</span>
+      <span class="pts-num" id="top-pts">0</span>
+      <span style="color:var(--dim);font-size:9px;">PTS</span>
+    </div>
+    <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">☀️</button>
+  </div>
+</div>
+
+<div class="content" id="content"></div>
+
+<nav class="nav">
+  <button class="nav-btn active" id="nav-log" onclick="showTab('log')">
+    <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+    LOG
+  </button>
+  <button class="nav-btn" id="nav-month" onclick="showTab('month')">
+    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+    MONTH
+  </button>
+  <button class="nav-btn" id="nav-year" onclick="showTab('year')">
+    <svg viewBox="0 0 24 24"><path d="M3 3h18v18H3zM3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
+    YEAR
+  </button>
+  <button class="nav-btn" id="nav-rewards" onclick="showTab('rewards')">
+    <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+    REWARDS
+  </button>
+</nav>
+
+<!-- Redeem Modal -->
+
+<div class="modal-overlay" id="modal" style="display:none;">
+  <div class="modal">
+    <h3 id="modal-title"></h3>
+    <div class="modal-sub" id="modal-sub"></div>
+    <div id="modal-body"></div>
+    <div class="modal-btns">
+      <button class="modal-confirm" id="modal-confirm">REDEEM</button>
+      <button class="modal-cancel" onclick="closeModal()">CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'deficit-tracker-v2';
+const REWARDS_KEY = 'deficit-rewards-v1';
+
+const REWARDS = [
+  { id:'r1', icon:'🎮', name:'Free Evening', desc:'No tracking tonight — eat clean, no logging', cost:10 },
+  { id:'r2', icon:'🍕', name:'Cheat Meal', desc:'One full meal, no guilt, logged but not judged', cost:25 },
+  { id:'r3', icon:'👟', name:'New Gear Fund', desc:'Justify a fitness purchase — you earned it', cost:50 },
+  { id:'r4', icon:'🏖️', name:'Deload Week', desc:'Scheduled rest week, lighter training', cost:100 },
+  { id:'r5', icon:'🏆', name:'Major Reward', desc:'Something big — your call (shoes, experience, etc.)', cost:200 },
+];
+
+const defaultData = [
+  { date:'2026-02-26', burn:2449, eat:1650, protein:170 },
+  { date:'2026-02-27', burn:2239, eat:2400, protein:125 },
+  { date:'2026-02-28', burn:2150, eat:1510, protein:165 },
+  { date:'2026-03-01', burn:2152, eat:1710, protein:174 },
+];
+
+let currentTab = 'log';
+let viewMonth = new Date().getMonth();
+let viewYear = new Date().getFullYear();
+let viewYearY = new Date().getFullYear();
+let editingIndex = null;
+let showingForm = false;
+let pendingRedeem = null;
+
+function loadData() {
+  try { const d = localStorage.getItem(STORAGE_KEY); return d ? JSON.parse(d) : defaultData; } catch { return defaultData; }
+}
+function saveData(d) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); } catch {} }
+function loadRewards() {
+  try { const d = localStorage.getItem(REWARDS_KEY); return d ? JSON.parse(d) : { totalEarned:0, spent:0, redeemed:[] }; } catch { return { totalEarned:0, spent:0, redeemed:[] }; }
+}
+function saveRewards(r) { try { localStorage.setItem(REWARDS_KEY, JSON.stringify(r)); } catch {} }
+
+function calcPoints(row) {
+  const def = row.burn - row.eat;
+  let pts = 0;
+  if (def >= 500) pts += 3;
+  else if (def >= 300) pts += 2;
+  else if (def >= 1) pts += 1;
+  if (row.protein >= 160) pts += 2;
+  else if (row.protein >= 140) pts += 1;
+  if (def >= 300 && row.protein >= 160) pts += 1; // bonus
+  return Math.min(pts, 6);
+}
+
+function totalPoints() {
+  const data = loadData();
+  return data.reduce((s, r) => s + calcPoints(r), 0);
+}
+
+function availablePoints() {
+  const rw = loadRewards();
+  return totalPoints() - rw.spent;
+}
+
+function defColor(d) { return d >= 300 ? 'green' : d >= 0 ? 'yellow' : 'red'; }
+function protColor(p) { return p >= 160 ? 'green' : p >= 140 ? 'yellow' : 'red'; }
+function dayClass(d, p) {
+  const def = d; const dc = defColor(def); const pc = protColor(p);
+  if (dc === 'green' && pc !== 'red') return 'c-green';
+  if (dc === 'red' || pc === 'red') return 'c-red';
+  return 'c-yellow';
+}
+
+function fmt(n) { return n > 0 ? '+' + n.toLocaleString() : n.toLocaleString(); }
+
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const MONS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+function parseDate(s) {
+  // support both 2026-02-26 and legacy 2/26
+  if (s.includes('-')) return new Date(s + 'T00:00:00');
+  const parts = s.split('/');
+  if (parts.length === 2) return new Date(2026, parseInt(parts[0])-1, parseInt(parts[1]));
+  return new Date(s);
+}
+
+function toKey(date) {
+  return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+}
+
+function getDataMap() {
+  const data = loadData();
+  const map = {};
+  data.forEach((r, i) => {
+    const d = parseDate(r.date);
+    map[toKey(d)] = { ...r, idx: i, pts: calcPoints(r) };
+  });
+  return map;
+}
+
+function updateTopPts() {
+  document.getElementById('top-pts').textContent = availablePoints();
+}
+
+// ─── TAB ROUTING ───────────────────────────────────────────────────────────
+function showTab(tab) {
+  currentTab = tab;
+  showingForm = false;
+  editingIndex = null;
+  ['log','month','year','rewards'].forEach(t => {
+    document.getElementById('nav-'+t).classList.toggle('active', t === tab);
+  });
+  updateTopPts();
+  if (tab === 'log') renderLog();
+  else if (tab === 'month') renderMonth();
+  else if (tab === 'year') renderYear();
+  else renderRewards();
+}
+
+// ─── LOG TAB ───────────────────────────────────────────────────────────────
+function renderLog() {
+  const data = loadData();
+  const sorted = [...data].map((r,i) => ({...r, origIdx:i})).sort((a,b) => parseDate(b.date)-parseDate(a.date));
+
+  const avgBurn = data.length ? Math.round(data.reduce((s,r)=>s+r.burn,0)/data.length) : 0;
+  const avgDef = data.length ? Math.round(data.reduce((s,r)=>s+(r.burn-r.eat),0)/data.length) : 0;
+  const avgProt = data.length ? Math.round(data.reduce((s,r)=>s+r.protein,0)/data.length) : 0;
+  const dc = defColor(avgDef), pc = protColor(avgProt);
+
+  // Streak
+  let streak = 0;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const map = getDataMap();
+  for (let i = 0; i < 365; i++) {
+    const d = new Date(today); d.setDate(d.getDate() - i);
+    const k = toKey(d); const row = map[k];
+    if (!row) break;
+    const def = row.burn - row.eat;
+    if (def >= 300 && row.protein >= 140) streak++;
+    else break;
+  }
+
+  let html = '';
+  if (data.length > 0) {
+    html += `<div class="cards">
+      <div class="card"><div class="clabel">AVG BURN</div><div class="cval">${avgBurn.toLocaleString()}<span class="cunit">cal</span></div></div>
+      <div class="card"><div class="clabel">AVG DEFICIT</div><div class="cval ${dc}">${fmt(avgDef)}<span class="cunit">cal</span></div></div>
+      <div class="card"><div class="clabel">AVG PROTEIN</div><div class="cval ${pc}">${avgProt}<span class="cunit">g</span></div></div>
+    </div>`;
+    if (streak > 0) {
+      html += `<div style="margin-bottom:14px;"><span class="streak-badge">🔥 ${streak}-day streak</span></div>`;
+    }
+  }
+
+  html += `<div class="sec-head">RECENT ENTRIES</div>`;
+  html += `<div class="tbl"><div class="tbl-head"><span>DATE</span><span>BURN</span><span>EAT</span><span>DEFICIT</span><span>PROTEIN</span><span>PTS</span><span></span></div>`;
+  if (sorted.length === 0) {
+    html += `<div class="empty-state">No entries yet. Add your first day.</div>`;
+  } else {
+    sorted.forEach(r => {
+      const def = r.burn - r.eat;
+      const dc2 = defColor(def), pc2 = protColor(r.protein);
+      const pts = calcPoints(r);
+      const d = parseDate(r.date);
+      const label = `${d.getMonth()+1}/${d.getDate()}`;
+      html += `<div class="tbl-row">
+        <div class="dt">${label}</div>
+        <div class="nm">${r.burn.toLocaleString()}</div>
+        <div class="nm">${r.eat.toLocaleString()}</div>
+        <div class="df ${dc2}">${fmt(def)}</div>
+        <div class="pr ${pc2}">${r.protein}g</div>
+        <div class="px">+${pts}</div>
+        <div class="row-acts">
+          <button class="btn-e" onclick="editEntry(${r.origIdx})">✎</button>
+          <button class="btn-d" onclick="deleteEntry(${r.origIdx})">×</button>
+        </div>
+      </div>`;
+    });
+  }
+  html += `</div>`;
+
+  html += `<div class="legend"><span>● <span class="green">On track</span></span><span>● <span class="yellow">Borderline</span></span><span>● <span class="red">Off track</span></span></div>`;
+
+  if (!showingForm) {
+    html += `<button class="add-btn" onclick="openForm()">+ ADD DAY</button>`;
+  } else {
+    const isEdit = editingIndex !== null;
+    const data2 = loadData();
+    const r = isEdit ? data2[editingIndex] : null;
+    const d = r ? parseDate(r.date) : null;
+    const dval = r ? `${(d.getMonth()+1)}/${d.getDate()}/${d.getFullYear()}` : '';
+    html += `<div class="form-wrap">
+      <div class="form-title">${isEdit ? 'EDIT ENTRY' : 'NEW ENTRY'}</div>
+      <div class="form-grid">
+        <div class="field"><label>DATE (M/D/YYYY)</label><input id="f-date" type="text" placeholder="3/2/2026" value="${dval}" inputmode="text"/></div>
+        <div class="field"><label>CALORIES BURNED</label><input id="f-burn" type="number" placeholder="2200" value="${r ? r.burn : ''}" inputmode="numeric"/></div>
+        <div class="field"><label>CALORIES EATEN</label><input id="f-eat" type="number" placeholder="1700" value="${r ? r.eat : ''}" inputmode="numeric"/></div>
+        <div class="field"><label>PROTEIN (g)</label><input id="f-prot" type="number" placeholder="155" value="${r ? r.protein : ''}" inputmode="numeric"/></div>
+      </div>
+      <div class="form-btns">
+        <button class="btn-save" onclick="saveEntry()">${isEdit ? 'SAVE CHANGES' : 'ADD ENTRY'}</button>
+        <button class="btn-cancel" onclick="closeForm()">CANCEL</button>
+      </div>
+    </div>`;
+  }
+
+  document.getElementById('content').innerHTML = html;
+  if (showingForm) setTimeout(() => document.getElementById('f-date') && document.getElementById('f-date').focus(), 50);
+}
+
+function openForm(idx) {
+  editingIndex = idx !== undefined ? idx : null;
+  showingForm = true;
+  renderLog();
+}
+
+function closeForm() { showingForm = false; editingIndex = null; renderLog(); }
+
+function saveEntry() {
+  const dateStr = document.getElementById('f-date').value.trim();
+  const burn = parseInt(document.getElementById('f-burn').value);
+  const eat = parseInt(document.getElementById('f-eat').value);
+  const protein = parseInt(document.getElementById('f-prot').value);
+  if (!dateStr || isNaN(burn) || isNaN(eat) || isNaN(protein)) { alert('Please fill in all fields.'); return; }
+
+  // Parse date flexibly
+  let dateKey;
+  const parts = dateStr.split('/');
+  if (parts.length === 3) {
+    dateKey = `${parts[2]}-${String(parts[0]).padStart(2,'0')}-${String(parts[1]).padStart(2,'0')}`;
+  } else if (parts.length === 2) {
+    dateKey = `2026-${String(parts[0]).padStart(2,'0')}-${String(parts[1]).padStart(2,'0')}`;
+  } else { alert('Use M/D/YYYY format'); return; }
+
+  const data = loadData();
+  const entry = { date: dateKey, burn, eat, protein };
+  if (editingIndex !== null) { data[editingIndex] = entry; }
+  else { data.push(entry); }
+  saveData(data);
+  showingForm = false; editingIndex = null;
+  renderLog();
+}
+
+function editEntry(i) { openForm(i); }
+
+function deleteEntry(i) {
+  if (!confirm('Delete this entry?')) return;
+  const data = loadData(); data.splice(i, 1); saveData(data); renderLog();
+}
+
+// ─── MONTH TAB ─────────────────────────────────────────────────────────────
+function renderMonth() {
+  const map = getDataMap();
+  const year = viewYear, month = viewMonth;
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  const today = new Date();
+
+  // Month stats
+  const monthRows = [];
+  for (let d = 1; d <= daysInMonth; d++) {
+    const k = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    if (map[k]) monthRows.push(map[k]);
+  }
+  const mAvgDef = monthRows.length ? Math.round(monthRows.reduce((s,r)=>s+(r.burn-r.eat),0)/monthRows.length) : null;
+  const mAvgProt = monthRows.length ? Math.round(monthRows.reduce((s,r)=>s+r.protein,0)/monthRows.length) : null;
+  const mPts = monthRows.reduce((s,r)=>s+r.pts,0);
+  const mDefDays = monthRows.filter(r=>(r.burn-r.eat)>=300).length;
+
+  let html = `<div class="month-nav">
+    <button class="mn-btn" onclick="prevMonth()">‹</button>
+    <div class="mn-title">${MONTHS[month]} ${year}</div>
+    <button class="mn-btn" onclick="nextMonth()">›</button>
+  </div>`;
+
+  if (monthRows.length > 0) {
+    html += `<div class="month-summary">
+      <div class="ms-card"><div class="msl">AVG DEFICIT</div><div class="msv ${mAvgDef !== null ? defColor(mAvgDef) : ''}">${mAvgDef !== null ? fmt(mAvgDef) : '—'}<span class="msu">cal</span></div></div>
+      <div class="ms-card"><div class="msl">AVG PROTEIN</div><div class="msv ${mAvgProt !== null ? protColor(mAvgProt) : ''}">${mAvgProt !== null ? mAvgProt+'g' : '—'}</div></div>
+      <div class="ms-card"><div class="msl">DEFICIT DAYS</div><div class="msv green">${mDefDays}<span class="msu">days</span></div></div>
+      <div class="ms-card"><div class="msl">POINTS EARNED</div><div class="msv gold">${mPts}<span class="msu">pts</span></div></div>
+    </div>`;
+  }
+
+  // Calendar
+  html += `<div class="cal-grid">`;
+  ['S','M','T','W','T','F','S'].forEach(d => html += `<div class="cal-dow">${d}</div>`);
+  for (let i = 0; i < firstDay; i++) html += `<div class="cal-day empty"></div>`;
+  for (let d = 1; d <= daysInMonth; d++) {
+    const k = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const row = map[k];
+    const isToday = today.getFullYear()===year && today.getMonth()===month && today.getDate()===d;
+    if (row) {
+      const def = row.burn - row.eat;
+      const cls = dayClass(def, row.protein);
+      html += `<div class="cal-day has-data ${cls}${isToday?' today':''}" onclick="jumpToDate('${k}')">
+        <span class="cd-num">${d}</span>
+        <span class="cd-pts">+${row.pts}</span>
+      </div>`;
+    } else {
+      html += `<div class="cal-day c-empty${isToday?' today':''}"><span class="cd-num" style="color:var(--dim)">${d}</span></div>`;
+    }
+  }
+  html += `</div>`;
+
+  html += `<div class="legend"><span>● <span class="green">On track</span></span><span>● <span class="yellow">Borderline</span></span><span>● <span class="red">Off track</span></span></div>`;
+
+  // Month entries table
+  if (monthRows.length > 0) {
+    html += `<div class="sec-head">ENTRIES THIS MONTH</div>`;
+    html += `<div class="tbl"><div class="tbl-head"><span>DATE</span><span>BURN</span><span>EAT</span><span>DEFICIT</span><span>PROTEIN</span><span>PTS</span><span></span></div>`;
+    for (let d = daysInMonth; d >= 1; d--) {
+      const k = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      const row = map[k];
+      if (!row) continue;
+      const def = row.burn - row.eat;
+      html += `<div class="tbl-row">
+        <div class="dt">${month+1}/${d}</div>
+        <div class="nm">${row.burn.toLocaleString()}</div>
+        <div class="nm">${row.eat.toLocaleString()}</div>
+        <div class="df ${defColor(def)}">${fmt(def)}</div>
+        <div class="pr ${protColor(row.protein)}">${row.protein}g</div>
+        <div class="px">+${row.pts}</div>
+        <div class="row-acts">
+          <button class="btn-e" onclick="editEntry(${row.idx})">✎</button>
+          <button class="btn-d" onclick="deleteFromMonth(${row.idx})">×</button>
+        </div>
+      </div>`;
+    }
+    html += `</div>`;
+  } else {
+    html += `<div style="text-align:center;color:var(--dim);padding:30px;font-size:13px;">No data logged this month yet.</div>`;
+  }
+
+  document.getElementById('content').innerHTML = html;
+}
+
+function prevMonth() { viewMonth--; if(viewMonth<0){viewMonth=11;viewYear--;} renderMonth(); }
+function nextMonth() { viewMonth++; if(viewMonth>11){viewMonth=0;viewYear++;} renderMonth(); }
+
+function jumpToDate(k) {
+  // Switch to log tab and scroll — for now just switch to log
+  showTab('log');
+}
+
+function deleteFromMonth(i) {
+  if (!confirm('Delete this entry?')) return;
+  const data = loadData(); data.splice(i,1); saveData(data); renderMonth();
+}
+
+// ─── YEAR TAB ──────────────────────────────────────────────────────────────
+function renderYear() {
+  const map = getDataMap();
+  const year = viewYearY;
+
+  // Year totals
+  let yPts = 0, yDays = 0, yDefDays = 0;
+  Object.values(map).forEach(r => {
+    const d = parseDate(r.date);
+    if (d.getFullYear() === year) { yPts += r.pts; yDays++; if((r.burn-r.eat)>=300) yDefDays++; }
+  });
+
+  let html = `<div class="year-nav">
+    <button class="mn-btn" onclick="prevYear()">‹</button>
+    <div class="yn-title">${year}</div>
+    <button class="mn-btn" onclick="nextYear()">›</button>
+  </div>`;
+
+  html += `<div class="year-summary">
+    <div class="card"><div class="clabel">DAYS LOGGED</div><div class="cval">${yDays}</div></div>
+    <div class="card"><div class="clabel">DEFICIT DAYS</div><div class="cval green">${yDefDays}</div></div>
+    <div class="card"><div class="clabel">TOTAL PTS</div><div class="cval gold">${yPts}</div></div>
+  </div>`;
+
+  html += `<div class="sec-head">MONTHLY OVERVIEW</div>`;
+  html += `<div class="year-grid">`;
+
+  for (let m = 0; m < 12; m++) {
+    const daysInMonth = new Date(year, m+1, 0).getDate();
+    const firstDay = new Date(year, m, 1).getDay();
+    let mPts = 0;
+    let dots = '';
+    // blanks
+    for (let i = 0; i < firstDay; i++) dots += `<div class="ym-dot de"></div>`;
+    for (let d = 1; d <= daysInMonth; d++) {
+      const k = `${year}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      const row = map[k];
+      if (row) {
+        const def = row.burn - row.eat;
+        const cls = dayClass(def, row.protein);
+        const dotCls = cls==='c-green'?'dg':cls==='c-yellow'?'dy':'dr';
+        dots += `<div class="ym-dot ${dotCls}"></div>`;
+        mPts += row.pts;
+      } else {
+        dots += `<div class="ym-dot de"></div>`;
+      }
+    }
+    html += `<div class="yr-month" onclick="goToMonth(${m})">
+      <div class="ym-name">${MONS[m]}</div>
+      <div class="ym-mini">${dots}</div>
+      ${mPts > 0 ? `<div class="ym-pts">+${mPts}pts</div>` : ''}
+    </div>`;
+  }
+  html += `</div>`;
+  document.getElementById('content').innerHTML = html;
+}
+
+function prevYear() { viewYearY--; renderYear(); }
+function nextYear() { viewYearY++; renderYear(); }
+function goToMonth(m) { viewMonth = m; viewYear = viewYearY; showTab('month'); }
+
+// ─── REWARDS TAB ───────────────────────────────────────────────────────────
+function renderRewards() {
+  const avail = availablePoints();
+  const total = totalPoints();
+  const rw = loadRewards();
+
+  let html = `<div class="pts-total">
+    <div class="pt-left">
+      <div class="ptl">AVAILABLE POINTS</div>
+      <div class="ptv">${avail}</div>
+    </div>
+    <div class="pt-right">
+      <div style="color:var(--dim);font-size:10px;">Total earned</div>
+      <div style="color:var(--muted);font-size:14px;font-weight:700;">${total} pts</div>
+      <div style="color:var(--dim);font-size:10px;margin-top:4px;">Spent</div>
+      <div style="color:var(--muted);font-size:14px;font-weight:700;">${rw.spent} pts</div>
+    </div>
+  </div>`;
+
+  html += `<div class="sec-head">POINT BREAKDOWN</div>`;
+  html += `<div class="tbl" style="margin-bottom:20px;padding:12px 14px;line-height:2;">
+    <div style="font-size:11px;color:var(--dim);">Deficit 1–299 cal → <span class="yellow">+1 pt</span></div>
+    <div style="font-size:11px;color:var(--dim);">Deficit 300–499 cal → <span class="green">+2 pts</span></div>
+    <div style="font-size:11px;color:var(--dim);">Deficit 500+ cal → <span class="green">+3 pts</span></div>
+    <div style="font-size:11px;color:var(--dim);">Protein 140–159g → <span class="yellow">+1 pt</span></div>
+    <div style="font-size:11px;color:var(--dim);">Protein 160g+ → <span class="green">+2 pts</span></div>
+    <div style="font-size:11px;color:var(--dim);">Both targets hit (300+ & 160g+) → <span class="gold">+1 bonus pt</span></div>
+    <div style="font-size:11px;color:var(--muted);margin-top:4px;">Max 6 pts per day</div>
+  </div>`;
+
+  html += `<div class="sec-head">REWARDS</div>`;
+  html += `<div class="reward-list">`;
+  REWARDS.forEach(reward => {
+    const canRedeem = avail >= reward.cost;
+    const pct = Math.min(100, Math.round((avail / reward.cost) * 100));
+    html += `<div class="reward-item ${canRedeem ? 'unlockable' : 'locked'}">
+      <div class="ri-icon">${reward.icon}</div>
+      <div class="ri-info">
+        <div class="ri-name">${reward.name}</div>
+        <div class="ri-desc">${reward.desc}</div>
+        ${!canRedeem ? `<div class="ri-prog"><div class="ri-prog-fill" style="width:${pct}%"></div></div>` : ''}
+        ${!canRedeem ? `<div style="font-size:9px;color:var(--dim);margin-top:3px;">${avail}/${reward.cost} pts</div>` : ''}
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+        <div class="ri-cost">${reward.cost} pts</div>
+        ${canRedeem ? `<button class="btn-redeem" onclick="openRedeem('${reward.id}')">REDEEM</button>` : ''}
+      </div>
+    </div>`;
+  });
+  html += `</div>`;
+
+  if (rw.redeemed && rw.redeemed.length > 0) {
+    html += `<div class="sec-head" style="margin-top:24px;">REDEEMED</div>`;
+    html += `<div class="redeemed-list">`;
+    [...rw.redeemed].reverse().forEach(r => {
+      html += `<div class="redeemed-item">
+        <span class="ri-r-name">${r.icon} ${r.name}</span>
+        <span class="ri-r-date">${r.date} · ${r.cost}pts</span>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  document.getElementById('content').innerHTML = html;
+}
+
+function openRedeem(id) {
+  const reward = REWARDS.find(r => r.id === id);
+  if (!reward) return;
+  pendingRedeem = reward;
+  document.getElementById('modal-title').textContent = `Redeem: ${reward.name}`;
+  document.getElementById('modal-sub').textContent = reward.desc;
+  document.getElementById('modal-body').innerHTML = `<div style="font-size:14px;color:var(--dim);">This will spend <span class="gold" style="font-weight:700;">${reward.cost} points</span> from your balance.</div>`;
+  document.getElementById('modal-confirm').onclick = confirmRedeem;
+  document.getElementById('modal').style.display = 'flex';
+}
+
+function confirmRedeem() {
+  if (!pendingRedeem) return;
+  const rw = loadRewards();
+  rw.spent = (rw.spent || 0) + pendingRedeem.cost;
+  rw.redeemed = rw.redeemed || [];
+  const today = new Date();
+  rw.redeemed.push({
+    id: pendingRedeem.id, name: pendingRedeem.name, icon: pendingRedeem.icon,
+    cost: pendingRedeem.cost,
+    date: `${today.getMonth()+1}/${today.getDate()}/${today.getFullYear()}`
+  });
+  saveRewards(rw);
+  pendingRedeem = null;
+  closeModal();
+  renderRewards();
+  updateTopPts();
+}
+
+function closeModal() {
+  document.getElementById('modal').style.display = 'none';
+  pendingRedeem = null;
+}
+
+// ─── THEME ─────────────────────────────────────────────────────────────────
+function toggleTheme() {
+  const isLight = document.body.classList.toggle('light');
+  document.documentElement.classList.toggle('light', isLight);
+  localStorage.setItem('theme', isLight ? 'light' : 'dark');
+  document.getElementById('theme-btn').textContent = isLight ? '🌙' : '☀️';
+}
+function initTheme() {
+  const saved = localStorage.getItem('theme');
+  const isLight = saved === 'light';
+  if (isLight) { document.body.classList.add('light'); document.documentElement.classList.add('light'); }
+  document.getElementById('theme-btn').textContent = isLight ? '🌙' : '☀️';
+}
+initTheme();
+
+// Init
+showTab('log');
+</script>
+
+</body>
+</html>
