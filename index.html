@@ -14,64 +14,66 @@
   <style>
     *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
     :root{
-      --bg:#0a0a0a;--bg1:#0f0f0f;--bg2:#141414;--bg3:#1a1a1a;
-      --border:#1e1e1e;--text:#e8e0d0;--muted:#888;--dim:#444;
+      --bg:#0a0a0a;--bg1:#111111;--bg2:#1a1a1a;--bg3:#222222;
+      --border:#333333;--text:#ffffff;--muted:#ffffff;--dim:#aaaaaa;
       --green:#4ade80;--yellow:#facc15;--red:#f87171;--blue:#60a5fa;--gold:#fbbf24;
-      --row-border:#111;--nm-color:#b0a898;--btn-e-bg:#1e1e1e;--btn-d-bg:#1a0808;
-      --input-bg:#080808;--streak-bg:#1a1200;--streak-border:#3a2800;
+      --row-border:#222222;--nm-color:#ffffff;--btn-e-bg:#2a2a2a;--btn-d-bg:#2a0808;
+      --input-bg:#0a0a0a;--streak-bg:#1a1200;--streak-border:#3a2800;
       --cal-green:#0d2a1a;--cal-yellow:#2a2200;--cal-red:#2a0d0d;
       --dot-g:#1a4a2a;--dot-y:#3a3000;--dot-r:#3a1010;
-      --reward-unlockable-border:#2a2a1a;--redeem-bg:#2a2200;--redeem-border:#4a3a00;
-      --redeemed-bg:#141414;--modal-overlay:rgba(0,0,0,0.85);--modal-btn-text:#000;
+      --reward-unlockable-border:#3a3a1a;--redeem-bg:#2a2200;--redeem-border:#4a3a00;
+      --redeemed-bg:#1a1a1a;--modal-overlay:rgba(0,0,0,0.85);--modal-btn-text:#000;
+      --label-color:#ffffff;--heading-color:#ffffff;--nav-inactive:#aaaaaa;
     }
     body.light, html.light{
-      --bg:#f5f2ee;--bg1:#ffffff;--bg2:#ede9e3;--bg3:#ddd8d0;
-      --border:#d0cbc3;--text:#1a1714;--muted:#666;--dim:#999;
+      --bg:#f0ece6;--bg1:#ffffff;--bg2:#e8e3dc;--bg3:#d8d2c8;
+      --border:#c8c0b4;--text:#000000;--muted:#000000;--dim:#000000;
       --green:#16a34a;--yellow:#ca8a04;--red:#dc2626;--gold:#b45309;
-      --row-border:#ede9e3;--nm-color:#555;--btn-e-bg:#e8e3dc;--btn-d-bg:#fde8e8;
-      --input-bg:#f5f2ee;--streak-bg:#fef3c7;--streak-border:#fbbf24;
+      --row-border:#e8e3dc;--nm-color:#000000;--btn-e-bg:#e0dbd4;--btn-d-bg:#fde8e8;
+      --input-bg:#f0ece6;--streak-bg:#fef3c7;--streak-border:#fbbf24;
       --cal-green:#dcfce7;--cal-yellow:#fef9c3;--cal-red:#fee2e2;
       --dot-g:#86efac;--dot-y:#fde047;--dot-r:#fca5a5;
       --reward-unlockable-border:#fbbf24;--redeem-bg:#fef3c7;--redeem-border:#fbbf24;
-      --redeemed-bg:#ede9e3;--modal-overlay:rgba(0,0,0,0.5);--modal-btn-text:#000;
+      --redeemed-bg:#e8e3dc;--modal-overlay:rgba(0,0,0,0.4);--modal-btn-text:#000;
+      --label-color:#000000;--heading-color:#000000;--nav-inactive:#555555;
     }
     html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Courier New',monospace;transition:background 0.2s,color 0.2s;}
     html{background:var(--bg);}
-    body{display:flex;flex-direction:column;max-width:640px;margin:0 auto;}
+    body{display:flex;flex-direction:column;max-width:640px;margin:0 auto;background:var(--bg);}
 
 ```
 /* TOP BAR */
-.topbar{padding:max(env(safe-area-inset-top),16px) 16px 12px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.topbar{padding:max(env(safe-area-inset-top),16px) 16px 12px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--bg);}
 .topbar-inner{display:flex;align-items:center;justify-content:space-between;}
-.topbar h1{font-size:18px;font-weight:700;letter-spacing:-0.5px;}
+.topbar h1{font-size:18px;font-weight:700;letter-spacing:-0.5px;color:var(--text);}
 .topbar .pts-badge{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:11px;cursor:pointer;display:flex;align-items:center;gap:5px;}
 .pts-badge .pts-num{color:var(--gold);font-weight:700;font-size:13px;}
 
 /* SCROLL CONTENT */
-.content{flex:1;overflow-y:auto;padding:16px 16px 80px;}
+.content{flex:1;overflow-y:auto;padding:16px 16px 80px;background:var(--bg);}
 
 /* BOTTOM NAV */
-.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:640px;background:var(--bg1);border-top:1px solid var(--border);display:flex;padding-bottom:env(safe-area-inset-bottom);z-index:100;}
-.nav-btn{flex:1;padding:12px 4px 8px;background:none;border:none;color:var(--dim);font-family:'Courier New',monospace;font-size:9px;letter-spacing:1.5px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;transition:color 0.2s;}
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:640px;background:var(--bg);border-top:1px solid var(--border);display:flex;padding-bottom:env(safe-area-inset-bottom);z-index:100;}
+.nav-btn{flex:1;padding:12px 4px 8px;background:none;border:none;color:var(--nav-inactive);font-family:'Courier New',monospace;font-size:9px;letter-spacing:1.5px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;transition:color 0.2s;}
 .nav-btn.active{color:var(--text);}
 .nav-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;}
 
 /* CARDS */
 .cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px;}
 .card{background:var(--bg1);border:1px solid var(--border);border-radius:10px;padding:12px 10px;}
-.card .clabel{font-size:8px;letter-spacing:2px;color:var(--dim);margin-bottom:4px;}
+.card .clabel{font-size:8px;letter-spacing:2px;color:var(--label-color);margin-bottom:4px;}
 .card .cval{font-size:19px;font-weight:700;}
-.card .cunit{font-size:10px;color:var(--dim);margin-left:2px;}
+.card .cunit{font-size:10px;color:var(--label-color);margin-left:2px;}
 .cards-2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
 
 /* SECTION HEADERS */
-.sec-head{font-size:9px;letter-spacing:3px;color:var(--dim);margin-bottom:10px;margin-top:20px;}
+.sec-head{font-size:9px;letter-spacing:3px;color:var(--label-color);margin-bottom:10px;margin-top:20px;}
 
 /* TABLE */
 .tbl{background:var(--bg1);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:12px;}
-.tbl-head{display:grid;grid-template-columns:52px 1fr 1fr 76px 68px 44px 40px;padding:9px 12px;border-bottom:1px solid var(--border);}
-.tbl-head span{font-size:7px;letter-spacing:2px;color:var(--dim);}
-.tbl-row{display:grid;grid-template-columns:52px 1fr 1fr 76px 68px 44px 40px;padding:12px 12px;border-bottom:1px solid var(--row-border);align-items:center;}
+.tbl-head{display:grid;grid-template-columns:44px 68px 68px 82px 70px 64px 44px;padding:9px 16px;border-bottom:1px solid var(--border);gap:8px;}
+.tbl-head span{font-size:7px;letter-spacing:2px;color:var(--label-color);}
+.tbl-row{display:grid;grid-template-columns:44px 68px 68px 82px 70px 64px 44px;padding:13px 16px;border-bottom:1px solid var(--row-border);align-items:center;gap:8px;}
 .tbl-row:last-child{border-bottom:none;}
 .tbl-row:active{background:var(--bg2);}
 .tbl-row .dt{font-size:11px;font-weight:600;color:var(--muted);}
@@ -79,27 +81,51 @@
 .tbl-row .df{font-size:12px;font-weight:700;}
 .tbl-row .pr{font-size:12px;font-weight:700;}
 .tbl-row .px{font-size:11px;font-weight:700;color:var(--gold);}
+.tbl-row .wo{font-size:8px;font-weight:700;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:0.5px;}
 .row-acts{display:flex;gap:4px;}
 .btn-e,.btn-d{width:24px;height:24px;border:none;border-radius:4px;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;}
 .btn-e{background:var(--btn-e-bg);color:var(--muted);}
 .btn-d{background:var(--btn-d-bg);color:var(--red);}
 
+/* WORKOUT DROPDOWN */
+.field select{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:7px;padding:10px 11px;color:var(--text);font-size:15px;font-family:'Courier New',monospace;outline:none;appearance:none;-webkit-appearance:none;}
+.field select:focus{border-color:var(--muted);}
+
+/* WEEKLY REPORT CARD */
+.report-card{background:var(--bg1);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;}
+.report-card .rc-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.report-card .rc-title{font-size:11px;font-weight:700;letter-spacing:1px;color:var(--text);}
+.report-card .rc-dates{font-size:9px;color:var(--label-color);letter-spacing:1px;}
+.rc-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.rc-stat{background:var(--bg2);border-radius:8px;padding:10px;}
+.rc-stat .rsl{font-size:8px;letter-spacing:2px;color:var(--label-color);margin-bottom:3px;}
+.rc-stat .rsv{font-size:16px;font-weight:700;}
+.rc-grade{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;font-size:16px;font-weight:700;border:2px solid var(--border);}
+.rc-grade.A{background:#0d2a1a;color:var(--green);border-color:var(--green);}
+.rc-grade.B{background:#1a2200;color:var(--yellow);border-color:var(--yellow);}
+.rc-grade.C{background:#2a1500;color:#f97316;border-color:#f97316;}
+.rc-grade.D{background:#2a0d0d;color:var(--red);border-color:var(--red);}
+body.light .rc-grade.A{background:#dcfce7;}
+body.light .rc-grade.B{background:#fef9c3;}
+body.light .rc-grade.C{background:#ffedd5;}
+body.light .rc-grade.D{background:#fee2e2;}
+
 .empty-state{padding:40px;text-align:center;color:var(--dim);font-size:13px;}
 
 /* ADD BTN */
-.add-btn{width:100%;padding:14px;background:transparent;border:1px dashed var(--bg3);border-radius:10px;color:var(--dim);font-size:11px;letter-spacing:2px;cursor:pointer;font-family:'Courier New',monospace;transition:all 0.2s;}
+.add-btn{width:100%;padding:14px;background:transparent;border:1px dashed var(--bg3);border-radius:10px;color:var(--label-color);font-size:11px;letter-spacing:2px;cursor:pointer;font-family:'Courier New',monospace;transition:all 0.2s;}
 .add-btn:active{border-color:var(--muted);color:var(--muted);}
 
 /* FORM */
 .form-wrap{background:var(--bg1);border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:12px;}
-.form-title{font-size:9px;letter-spacing:3px;color:var(--dim);margin-bottom:12px;}
+.form-title{font-size:9px;letter-spacing:3px;color:var(--label-color);margin-bottom:12px;}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
-.field label{display:block;font-size:8px;letter-spacing:2px;color:var(--dim);margin-bottom:5px;}
+.field label{display:block;font-size:8px;letter-spacing:2px;color:var(--label-color);margin-bottom:5px;}
 .field input{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:7px;padding:10px 11px;color:var(--text);font-size:15px;font-family:'Courier New',monospace;outline:none;}
 .field input:focus{border-color:var(--muted);}
 .form-btns{display:flex;gap:8px;}
 .btn-save{flex:1;padding:12px;background:var(--text);border:none;border-radius:8px;color:var(--bg);font-size:11px;font-weight:700;cursor:pointer;font-family:'Courier New',monospace;letter-spacing:2px;}
-.btn-cancel{padding:12px 14px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--dim);font-size:11px;cursor:pointer;font-family:'Courier New',monospace;}
+.btn-cancel{padding:12px 14px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--label-color);font-size:11px;cursor:pointer;font-family:'Courier New',monospace;}
 
 /* MONTH NAV */
 .month-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
@@ -109,13 +135,13 @@
 /* MONTH SUMMARY */
 .month-summary{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
 .ms-card{background:var(--bg1);border:1px solid var(--border);border-radius:10px;padding:12px;}
-.ms-card .msl{font-size:8px;letter-spacing:2px;color:var(--dim);margin-bottom:4px;}
+.ms-card .msl{font-size:8px;letter-spacing:2px;color:var(--label-color);margin-bottom:4px;}
 .ms-card .msv{font-size:22px;font-weight:700;}
-.ms-card .msu{font-size:10px;color:var(--dim);margin-left:2px;}
+.ms-card .msu{font-size:10px;color:var(--label-color);margin-left:2px;}
 
 /* CALENDAR GRID */
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:16px;}
-.cal-dow{font-size:8px;letter-spacing:1px;color:var(--dim);text-align:center;padding-bottom:4px;}
+.cal-dow{font-size:8px;letter-spacing:1px;color:var(--label-color);text-align:center;padding-bottom:4px;}
 .cal-day{aspect-ratio:1;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;cursor:pointer;border:1px solid transparent;transition:all 0.15s;position:relative;}
 .cal-day.empty{background:transparent;cursor:default;}
 .cal-day.has-data{border-color:var(--bg3);}
@@ -134,7 +160,7 @@
 .year-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;}
 .yr-month{background:var(--bg1);border:1px solid var(--border);border-radius:8px;padding:10px;cursor:pointer;}
 .yr-month:active{background:var(--bg2);}
-.yr-month .ym-name{font-size:9px;letter-spacing:2px;color:var(--dim);margin-bottom:6px;}
+.yr-month .ym-name{font-size:9px;letter-spacing:2px;color:var(--label-color);margin-bottom:6px;}
 .yr-month .ym-mini{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
 .ym-dot{width:100%;aspect-ratio:1;border-radius:2px;}
 .ym-dot.dg{background:var(--dot-g);}
@@ -148,9 +174,9 @@
 /* REWARDS */
 .rewards-section{margin-top:4px;}
 .pts-total{background:var(--bg1);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;}
-.pts-total .pt-left .ptl{font-size:9px;letter-spacing:2px;color:var(--dim);margin-bottom:4px;}
+.pts-total .pt-left .ptl{font-size:9px;letter-spacing:2px;color:var(--label-color);margin-bottom:4px;}
 .pts-total .pt-left .ptv{font-size:32px;font-weight:700;color:var(--gold);}
-.pts-total .pt-right{font-size:11px;color:var(--dim);text-align:right;line-height:1.6;}
+.pts-total .pt-right{font-size:11px;color:var(--label-color);text-align:right;line-height:1.6;}
 
 .reward-list{display:flex;flex-direction:column;gap:8px;}
 .reward-item{background:var(--bg1);border:1px solid var(--border);border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px;}
@@ -159,7 +185,7 @@
 .ri-icon{font-size:24px;width:40px;text-align:center;}
 .ri-info{flex:1;}
 .ri-name{font-size:13px;font-weight:600;margin-bottom:2px;}
-.ri-desc{font-size:11px;color:var(--dim);}
+.ri-desc{font-size:11px;color:var(--label-color);}
 .ri-cost{font-size:12px;color:var(--gold);font-weight:700;white-space:nowrap;}
 .ri-prog{height:3px;background:var(--bg3);border-radius:2px;margin-top:6px;overflow:hidden;}
 .ri-prog-fill{height:100%;border-radius:2px;background:var(--gold);transition:width 0.3s;}
@@ -170,10 +196,10 @@
 .redeemed-list{display:flex;flex-direction:column;gap:6px;margin-top:8px;}
 .redeemed-item{background:var(--redeemed-bg);border-radius:8px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;}
 .ri-r-name{font-size:12px;}
-.ri-r-date{font-size:10px;color:var(--dim);}
+.ri-r-date{font-size:10px;color:var(--label-color);}
 
 /* LEGEND */
-.legend{display:flex;gap:12px;font-size:10px;color:var(--dim);margin-bottom:14px;flex-wrap:wrap;}
+.legend{display:flex;gap:12px;font-size:10px;color:var(--label-color);margin-bottom:14px;flex-wrap:wrap;}
 
 /* COLORS */
 .green{color:var(--green);}
@@ -185,10 +211,10 @@
 .modal-overlay{position:fixed;inset:0;background:var(--modal-overlay);z-index:200;display:flex;align-items:flex-end;justify-content:center;}
 .modal{background:var(--bg1);border:1px solid var(--border);border-radius:16px 16px 0 0;padding:24px 20px max(env(safe-area-inset-bottom),20px);width:100%;max-width:640px;}
 .modal h3{font-size:16px;font-weight:700;margin-bottom:4px;}
-.modal .modal-sub{font-size:12px;color:var(--dim);margin-bottom:16px;}
+.modal .modal-sub{font-size:12px;color:var(--label-color);margin-bottom:16px;}
 .modal-btns{display:flex;gap:10px;margin-top:16px;}
 .modal-confirm{flex:1;padding:13px;background:var(--gold);border:none;border-radius:8px;color:var(--modal-btn-text);font-size:12px;font-weight:700;cursor:pointer;font-family:'Courier New',monospace;letter-spacing:1px;}
-.modal-cancel{padding:13px 16px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--dim);font-size:12px;cursor:pointer;font-family:'Courier New',monospace;}
+.modal-cancel{padding:13px 16px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--label-color);font-size:12px;cursor:pointer;font-family:'Courier New',monospace;}
 
 .streak-badge{display:inline-flex;align-items:center;gap:4px;background:var(--streak-bg);border:1px solid var(--streak-border);border-radius:20px;padding:4px 10px;font-size:11px;color:var(--gold);}
 /* THEME TOGGLE */
@@ -202,13 +228,13 @@
 <div class="topbar">
   <div class="topbar-inner">
     <div>
-      <div style="font-size:9px;letter-spacing:3px;color:var(--dim);margin-bottom:2px;">DAILY LOG</div>
+      <div style="font-size:9px;letter-spacing:3px;color:var(--label-color);margin-bottom:2px;">DAILY LOG</div>
       <h1>Deficit Tracker</h1>
     </div>
     <div class="pts-badge" onclick="showTab('rewards')">
       <span>⭐</span>
       <span class="pts-num" id="top-pts">0</span>
-      <span style="color:var(--dim);font-size:9px;">PTS</span>
+      <span style="color:var(--label-color);font-size:9px;">PTS</span>
     </div>
     <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">☀️</button>
   </div>
@@ -262,10 +288,13 @@ const REWARDS = [
 ];
 
 const defaultData = [
-  { date:'2026-02-26', burn:2449, eat:1650, protein:170 },
-  { date:'2026-02-27', burn:2239, eat:2400, protein:125 },
-  { date:'2026-02-28', burn:2150, eat:1510, protein:165 },
-  { date:'2026-03-01', burn:2152, eat:1710, protein:174 },
+  { date:'2026-02-26', burn:2449, eat:1650, protein:170, workout:'' },
+  { date:'2026-02-27', burn:2239, eat:2400, protein:125, workout:'' },
+  { date:'2026-02-28', burn:2150, eat:1510, protein:165, workout:'' },
+  { date:'2026-03-01', burn:2152, eat:1710, protein:174, workout:'' },
+  { date:'2026-03-02', burn:2763, eat:1650, protein:200, workout:'' },
+  { date:'2026-03-03', burn:2956, eat:1800, protein:210, workout:'' },
+  { date:'2026-03-04', burn:2881, eat:1680, protein:186, workout:'' },
 ];
 
 let currentTab = 'log';
@@ -363,6 +392,52 @@ function showTab(tab) {
 }
 
 // ─── LOG TAB ───────────────────────────────────────────────────────────────
+const WORKOUT_ICONS = { 'Chest':'💪', 'Arms':'💪', 'Back':'🏋️', 'Legs':'🦵', 'Cardio':'🚴', 'Rest':'😴', '':'—' };
+
+function weeklyReportCard(data) {
+  if (data.length < 3) return '';
+  const sorted = [...data].sort((a,b) => parseDate(b.date)-parseDate(a.date));
+  // Get last full 7-day window with at least 3 entries
+  const latest = parseDate(sorted[0].date);
+  const weekStart = new Date(latest); weekStart.setDate(weekStart.getDate() - 6);
+  const weekRows = sorted.filter(r => { const d = parseDate(r.date); return d >= weekStart && d <= latest; });
+  if (weekRows.length < 3) return '';
+
+  const avgDef = Math.round(weekRows.reduce((s,r)=>s+(r.burn-r.eat),0)/weekRows.length);
+  const avgProt = Math.round(weekRows.reduce((s,r)=>s+r.protein,0)/weekRows.length);
+  const pts = weekRows.reduce((s,r)=>s+calcPoints(r),0);
+  const trained = weekRows.filter(r=>r.workout && r.workout !== 'Rest' && r.workout !== '').length;
+  const defDays = weekRows.filter(r=>(r.burn-r.eat)>=300).length;
+
+  // Grade
+  let score = 0;
+  if (avgDef >= 400) score += 3; else if (avgDef >= 200) score += 2; else if (avgDef >= 0) score += 1;
+  if (avgProt >= 160) score += 3; else if (avgProt >= 140) score += 2; else if (avgProt >= 120) score += 1;
+  if (trained >= 4) score += 2; else if (trained >= 2) score += 1;
+  const grade = score >= 7 ? 'A' : score >= 5 ? 'B' : score >= 3 ? 'C' : 'D';
+  const gradeMsg = { A:'Excellent week 🔥', B:'Solid week 👍', C:'Room to improve', D:'Rough week — reset' };
+
+  const ds = weekStart; const de = latest;
+  const dateRange = `${ds.getMonth()+1}/${ds.getDate()} – ${de.getMonth()+1}/${de.getDate()}`;
+
+  return `<div class="sec-head">WEEKLY REPORT</div>
+  <div class="report-card">
+    <div class="rc-head">
+      <div>
+        <div class="rc-title">WEEK OF ${dateRange}</div>
+        <div class="rc-dates" style="margin-top:3px;">${gradeMsg[grade]}</div>
+      </div>
+      <div class="rc-grade ${grade}">${grade}</div>
+    </div>
+    <div class="rc-grid">
+      <div class="rc-stat"><div class="rsl">AVG DEFICIT</div><div class="rsv ${defColor(avgDef)}">${fmt(avgDef)}<span style="font-size:10px;color:var(--label-color)"> cal</span></div></div>
+      <div class="rc-stat"><div class="rsl">AVG PROTEIN</div><div class="rsv ${protColor(avgProt)}">${avgProt}<span style="font-size:10px;color:var(--label-color)">g</span></div></div>
+      <div class="rc-stat"><div class="rsl">POINTS EARNED</div><div class="rsv gold">${pts}<span style="font-size:10px;color:var(--label-color)"> pts</span></div></div>
+      <div class="rc-stat"><div class="rsl">DAYS TRAINED</div><div class="rsv">${trained}<span style="font-size:10px;color:var(--label-color)"> / ${weekRows.length}</span></div></div>
+    </div>
+  </div>`;
+}
+
 function renderLog() {
   const data = loadData();
   const sorted = [...data].map((r,i) => ({...r, origIdx:i})).sort((a,b) => parseDate(b.date)-parseDate(a.date));
@@ -397,24 +472,27 @@ function renderLog() {
     }
   }
 
+  // Weekly report card
+  html += weeklyReportCard(data);
+
   html += `<div class="sec-head">RECENT ENTRIES</div>`;
-  html += `<div class="tbl"><div class="tbl-head"><span>DATE</span><span>BURN</span><span>EAT</span><span>DEFICIT</span><span>PROTEIN</span><span>PTS</span><span></span></div>`;
+  html += `<div class="tbl"><div class="tbl-head"><span>DATE</span><span>BURN</span><span>EAT</span><span>DEFICIT</span><span>PROTEIN</span><span>WORKOUT</span><span></span></div>`;
   if (sorted.length === 0) {
     html += `<div class="empty-state">No entries yet. Add your first day.</div>`;
   } else {
     sorted.forEach(r => {
       const def = r.burn - r.eat;
       const dc2 = defColor(def), pc2 = protColor(r.protein);
-      const pts = calcPoints(r);
       const d = parseDate(r.date);
       const label = `${d.getMonth()+1}/${d.getDate()}`;
+      const woLabel = r.workout ? r.workout.toUpperCase() : '—';
       html += `<div class="tbl-row">
         <div class="dt">${label}</div>
         <div class="nm">${r.burn.toLocaleString()}</div>
         <div class="nm">${r.eat.toLocaleString()}</div>
         <div class="df ${dc2}">${fmt(def)}</div>
         <div class="pr ${pc2}">${r.protein}g</div>
-        <div class="px">+${pts}</div>
+        <div class="wo">${woLabel}</div>
         <div class="row-acts">
           <button class="btn-e" onclick="editEntry(${r.origIdx})">✎</button>
           <button class="btn-d" onclick="deleteEntry(${r.origIdx})">×</button>
@@ -434,13 +512,25 @@ function renderLog() {
     const r = isEdit ? data2[editingIndex] : null;
     const d = r ? parseDate(r.date) : null;
     const dval = r ? `${(d.getMonth()+1)}/${d.getDate()}/${d.getFullYear()}` : '';
+    const wo = r ? (r.workout || '') : '';
     html += `<div class="form-wrap">
       <div class="form-title">${isEdit ? 'EDIT ENTRY' : 'NEW ENTRY'}</div>
       <div class="form-grid">
-        <div class="field"><label>DATE (M/D/YYYY)</label><input id="f-date" type="text" placeholder="3/2/2026" value="${dval}" inputmode="text"/></div>
+        <div class="field"><label>DATE (M/D/YYYY)</label><input id="f-date" type="text" placeholder="3/5/2026" value="${dval}" inputmode="text"/></div>
         <div class="field"><label>CALORIES BURNED</label><input id="f-burn" type="number" placeholder="2200" value="${r ? r.burn : ''}" inputmode="numeric"/></div>
         <div class="field"><label>CALORIES EATEN</label><input id="f-eat" type="number" placeholder="1700" value="${r ? r.eat : ''}" inputmode="numeric"/></div>
         <div class="field"><label>PROTEIN (g)</label><input id="f-prot" type="number" placeholder="155" value="${r ? r.protein : ''}" inputmode="numeric"/></div>
+        <div class="field" style="grid-column:1/-1"><label>WORKOUT</label>
+          <select id="f-workout">
+            <option value="" ${wo===''?'selected':''}>— Select workout —</option>
+            <option value="Chest" ${wo==='Chest'?'selected':''}>💪 Chest</option>
+            <option value="Arms" ${wo==='Arms'?'selected':''}>💪 Arms</option>
+            <option value="Back" ${wo==='Back'?'selected':''}>🏋️ Back</option>
+            <option value="Legs" ${wo==='Legs'?'selected':''}>🦵 Legs</option>
+            <option value="Cardio" ${wo==='Cardio'?'selected':''}>🚴 Cardio</option>
+            <option value="Rest" ${wo==='Rest'?'selected':''}>😴 Rest</option>
+          </select>
+        </div>
       </div>
       <div class="form-btns">
         <button class="btn-save" onclick="saveEntry()">${isEdit ? 'SAVE CHANGES' : 'ADD ENTRY'}</button>
@@ -466,9 +556,9 @@ function saveEntry() {
   const burn = parseInt(document.getElementById('f-burn').value);
   const eat = parseInt(document.getElementById('f-eat').value);
   const protein = parseInt(document.getElementById('f-prot').value);
+  const workout = document.getElementById('f-workout').value;
   if (!dateStr || isNaN(burn) || isNaN(eat) || isNaN(protein)) { alert('Please fill in all fields.'); return; }
 
-  // Parse date flexibly
   let dateKey;
   const parts = dateStr.split('/');
   if (parts.length === 3) {
@@ -478,7 +568,7 @@ function saveEntry() {
   } else { alert('Use M/D/YYYY format'); return; }
 
   const data = loadData();
-  const entry = { date: dateKey, burn, eat, protein };
+  const entry = { date: dateKey, burn, eat, protein, workout };
   if (editingIndex !== null) { data[editingIndex] = entry; }
   else { data.push(entry); }
   saveData(data);
@@ -543,7 +633,7 @@ function renderMonth() {
         <span class="cd-pts">+${row.pts}</span>
       </div>`;
     } else {
-      html += `<div class="cal-day c-empty${isToday?' today':''}"><span class="cd-num" style="color:var(--dim)">${d}</span></div>`;
+      html += `<div class="cal-day c-empty${isToday?' today':''}"><span class="cd-num" style="color:var(--label-color)">${d}</span></div>`;
     }
   }
   html += `</div>`;
@@ -666,9 +756,9 @@ function renderRewards() {
       <div class="ptv">${avail}</div>
     </div>
     <div class="pt-right">
-      <div style="color:var(--dim);font-size:10px;">Total earned</div>
+      <div style="color:var(--label-color);font-size:10px;">Total earned</div>
       <div style="color:var(--muted);font-size:14px;font-weight:700;">${total} pts</div>
-      <div style="color:var(--dim);font-size:10px;margin-top:4px;">Spent</div>
+      <div style="color:var(--label-color);font-size:10px;margin-top:4px;">Spent</div>
       <div style="color:var(--muted);font-size:14px;font-weight:700;">${rw.spent} pts</div>
     </div>
   </div>`;
