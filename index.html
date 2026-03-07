@@ -91,6 +91,16 @@
 .field select{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:7px;padding:10px 11px;color:var(--text);font-size:15px;font-family:'Courier New',monospace;outline:none;appearance:none;-webkit-appearance:none;}
 .field select:focus{border-color:var(--muted);}
 
+/* SCROLLING QUOTE */
+.quote-track{overflow:hidden;height:22px;margin-bottom:10px;position:relative;width:100%;}
+.quote-inner{display:inline-block;white-space:nowrap;padding-left:100%;animation:scroll-quote 45s linear infinite;}
+.quote-inner:hover{animation-play-state:paused;}
+@keyframes scroll-quote{
+  0%{transform:translateX(0);}
+  100%{transform:translateX(-100%);}
+}
+.quote-text{font-size:10px;letter-spacing:1px;color:var(--gold);font-style:italic;}
+
 /* WEEKLY REPORT CARD */
 .report-card{background:var(--bg1);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;}
 .report-card .rc-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
@@ -288,13 +298,15 @@ const REWARDS = [
 ];
 
 const defaultData = [
-  { date:'2026-02-26', burn:2449, eat:1650, protein:170, workout:'' },
-  { date:'2026-02-27', burn:2239, eat:2400, protein:125, workout:'' },
-  { date:'2026-02-28', burn:2150, eat:1510, protein:165, workout:'' },
-  { date:'2026-03-01', burn:2152, eat:1710, protein:174, workout:'' },
-  { date:'2026-03-02', burn:2763, eat:1650, protein:200, workout:'' },
-  { date:'2026-03-03', burn:2956, eat:1800, protein:210, workout:'' },
-  { date:'2026-03-04', burn:2881, eat:1680, protein:186, workout:'' },
+  { date:'2026-02-26', burn:2449, eat:1650, protein:170, workout:'BACK' },
+  { date:'2026-02-27', burn:2239, eat:2400, protein:125, workout:'REST' },
+  { date:'2026-02-28', burn:2150, eat:1510, protein:165, workout:'LEGS' },
+  { date:'2026-03-01', burn:2152, eat:1710, protein:174, workout:'ARMS' },
+  { date:'2026-03-02', burn:2763, eat:1650, protein:200, workout:'CHEST' },
+  { date:'2026-03-03', burn:2956, eat:1800, protein:210, workout:'BACK' },
+  { date:'2026-03-04', burn:2881, eat:1680, protein:186, workout:'CARDIO' },
+  { date:'2026-03-05', burn:2665, eat:1525, protein:180, workout:'CHEST' },
+  { date:'2026-03-06', burn:2672, eat:2470, protein:161, workout:'REST' },
 ];
 
 let currentTab = 'log';
@@ -395,19 +407,17 @@ function showTab(tab) {
 const WORKOUT_ICONS = { 'Chest':'💪', 'Arms':'💪', 'Back':'🏋️', 'Legs':'🦵', 'Cardio':'🚴', 'Rest':'😴', '':'—' };
 
 function weeklyReportCard(data) {
-  if (data.length < 3) return '';
+  if (data.length < 1) return '';
   const sorted = [...data].sort((a,b) => parseDate(b.date)-parseDate(a.date));
-  // Get last full 7-day window with at least 3 entries
-  const latest = parseDate(sorted[0].date);
-  const weekStart = new Date(latest); weekStart.setDate(weekStart.getDate() - 6);
-  const weekRows = sorted.filter(r => { const d = parseDate(r.date); return d >= weekStart && d <= latest; });
-  if (weekRows.length < 3) return '';
+  const weekRows = sorted.slice(0, 7);
 
   const avgDef = Math.round(weekRows.reduce((s,r)=>s+(r.burn-r.eat),0)/weekRows.length);
   const avgProt = Math.round(weekRows.reduce((s,r)=>s+r.protein,0)/weekRows.length);
   const pts = weekRows.reduce((s,r)=>s+calcPoints(r),0);
-  const trained = weekRows.filter(r=>r.workout && r.workout !== 'Rest' && r.workout !== '').length;
-  const defDays = weekRows.filter(r=>(r.burn-r.eat)>=300).length;
+  const trained = weekRows.filter(r => {
+    const wo = (r.workout || '').toLowerCase();
+    return wo && wo !== 'rest';
+  }).length;
 
   // Grade
   let score = 0;
@@ -417,14 +427,69 @@ function weeklyReportCard(data) {
   const grade = score >= 7 ? 'A' : score >= 5 ? 'B' : score >= 3 ? 'C' : 'D';
   const gradeMsg = { A:'Excellent week 🔥', B:'Solid week 👍', C:'Room to improve', D:'Rough week — reset' };
 
-  const ds = weekStart; const de = latest;
+  const de = parseDate(weekRows[0].date);
+  const ds = parseDate(weekRows[weekRows.length-1].date);
   const dateRange = `${ds.getMonth()+1}/${ds.getDate()} – ${de.getMonth()+1}/${de.getDate()}`;
+
+  // Dynamic quotes based on stats
+  const allQuotes = [
+    // Deficit based
+    avgDef >= 600 ? '🔥 Massive deficit — fat loss is happening right now.' : null,
+    avgDef >= 400 ? '📉 Strong deficit. Your body is burning stored fat.' : null,
+    avgDef >= 200 ? '✅ Solid deficit. Slow and steady wins the cut.' : null,
+    avgDef < 0 ? '⚠️ Calorie surplus this week — tighten up the eating.' : null,
+    // Protein based
+    avgProt >= 180 ? '💪 Elite protein intake. Muscle is fully protected.' : null,
+    avgProt >= 160 ? '✅ Protein on point. You\'re preserving muscle in this deficit.' : null,
+    avgProt >= 140 ? '👍 Protein is solid. Push toward 160g for best results.' : null,
+    avgProt < 140 ? '⚠️ Protein needs work — aim for 150g+ daily.' : null,
+    // Training based
+    trained >= 5 ? '🏋️ 5+ training days — elite consistency.' : null,
+    trained >= 4 ? '💪 4 days trained. That\'s how you build bigger arms.' : null,
+    trained >= 3 ? '👊 3 days trained. Keep the momentum going.' : null,
+    trained <= 1 ? '📅 Low training days — get more sessions in next week.' : null,
+    // Grade based
+    grade === 'A' ? '🏆 A-grade week. You\'re ahead of 90% of people.' : null,
+    grade === 'B' ? '📈 B-grade week. One more push and you\'re at the top.' : null,
+    grade === 'C' ? '🎯 C-grade week. Identify one thing to fix and lock it in.' : null,
+    // General fitness facts
+    '📊 A 500 cal/day deficit = ~1 lb of fat lost per week.',
+    '🧬 Protein keeps muscle alive during a cut. Never skip it.',
+    '⚖️ Scale fluctuates 2-4 lbs daily — trust the weekly trend.',
+    '😴 Sleep is when your muscles actually grow. Prioritize it.',
+    '🚴 Cardio burns calories. Lifting shapes the body underneath.',
+    '📉 Fat loss is not linear. Consistency beats perfection.',
+    '💧 Dehydration can look like hunger. Drink water first.',
+    '🔥 Your metabolism adapts — keep changing up the stimulus.',
+    '🧠 Discipline on bad days matters more than effort on good ones.',
+    '📐 Body recomposition is slow — but the results are permanent.',
+    '🥩 Lean protein is the most filling macronutrient. Use it.',
+    '⏱️ You don\'t need to be perfect. You need to be consistent.',
+    '🩻 Muscle burns more calories at rest than fat does.',
+    '📆 Missing one day doesn\'t break progress. Missing a week does.',
+    '🧊 Cold or hot — what matters is that you showed up.',
+    '💡 The deficit you maintain is more powerful than the one you sprint.',
+    '🏅 Every logged day is proof you\'re taking it seriously.',
+    '🎯 Small daily actions compound into massive results over time.',
+    '🔄 Rest days are part of the program — not a failure.',
+    '📸 Progress photos tell the truth the scale sometimes hides.',
+    '💥 Arms grow when you eat enough protein AND train hard. Both matter.',
+    '🧮 Tracking your food is the single highest ROI habit in fitness.',
+    '🌙 Late night eating isn\'t bad — total daily calories are what count.',
+    '🏃 10 minutes of movement beats 0. Always show up, even small.',
+    '⚡ Creatine + protein + deficit = the optimal body recomp stack.',
+  ].filter(Boolean);
+
+  // Pick 7 random quotes and join them
+  const shuffled = allQuotes.sort(() => Math.random() - 0.5).slice(0, 7);
+  const quoteLine = shuffled.join('   ·   ');
 
   return `<div class="sec-head">WEEKLY REPORT</div>
   <div class="report-card">
+    <div class="quote-track"><span class="quote-inner"><span class="quote-text">${quoteLine}</span></span></div>
     <div class="rc-head">
       <div>
-        <div class="rc-title">WEEK OF ${dateRange}</div>
+        <div class="rc-title">${dateRange}</div>
         <div class="rc-dates" style="margin-top:3px;">${gradeMsg[grade]}</div>
       </div>
       <div class="rc-grade ${grade}">${grade}</div>
